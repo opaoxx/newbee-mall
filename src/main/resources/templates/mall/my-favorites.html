@@ -1,0 +1,54 @@
+<!-- Copyright (c) 2019-2020 十三 all rights reserved. -->
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="mall/header::head-fragment('NewBee商城-我的收藏','my-favorites')"></head>
+<body>
+<header th:replace="mall/header::header-fragment"></header>
+<nav th:replace="mall/header::nav-fragment"></nav>
+
+<div id="personal">
+    <div class="self-info center clearfix">
+        <div th:replace="mall/personal-sidebar::sidebar-fragment"></div>
+        <main class="intro fr">
+            <div class="uc-content-box favorites-content">
+                <div class="box-hd"><h1 class="title">我的收藏</h1></div>
+                <p class="favorites-empty" th:if="${#lists.isEmpty(pageResult.list)}">
+                    暂无收藏 <a th:href="@{/index}">去逛商城</a>
+                </p>
+                <ul class="favorites-list" th:unless="${#lists.isEmpty(pageResult.list)}">
+                    <li th:each="item : ${pageResult.list}" class="favorite-item">
+                        <img th:if="${item.goodsPresent}" class="favorite-cover" th:src="@{${item.goodsCoverImg}}"
+                             alt="" width="72" height="72" loading="lazy">
+                        <div class="favorite-product">
+                            <a th:if="${item.viewable}" th:href="@{/goods/detail/{goodsId}(goodsId=${item.goodsId})}"
+                               th:text="${item.goodsName}">商品名称</a>
+                            <span th:if="${item.goodsPresent and !item.viewable}" th:text="${item.goodsName}">商品名称</span>
+                            <span th:unless="${item.goodsPresent}">商品已失效</span>
+                            <p th:if="${item.goodsPresent}" class="favorite-price"
+                               th:text="${item.sellingPrice + '.00 元'}">0.00 元</p>
+                            <p th:if="${item.goodsPresent and !item.viewable}" class="favorite-note">已下架</p>
+                        </div>
+                        <button type="button" class="favorite-remove" data-favorite-remove
+                                th:attr="data-favorite-url=@{/personal/favorites/{goodsId}(goodsId=${item.goodsId})},
+                                         data-login-url=@{/login}">取消收藏</button>
+                    </li>
+                </ul>
+                <nav class="newbee-pagenavi" aria-label="收藏列表分页" th:if="${pageResult.totalPage > 1}">
+                    <a class="numbers" th:if="${pageResult.currPage > 1}"
+                       th:href="@{/personal/favorites(page=${pageResult.currPage - 1})}">上一页</a>
+                    <span aria-current="page" th:text="${pageResult.currPage + ' / ' + pageResult.totalPage}">1 / 1</span>
+                    <a class="numbers" th:if="${pageResult.currPage < pageResult.totalPage}"
+                       th:href="@{/personal/favorites(page=${pageResult.currPage + 1})}">下一页</a>
+                </nav>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="mall/footer::footer-fragment"></div>
+<script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+<script th:src="@{/admin/plugins/sweetalert2/sweetalert2.all.min.js}"></script>
+<script th:src="@{/mall/js/search.js}"></script>
+<script th:src="@{/mall/js/favorites.js}"></script>
+</body>
+</html>

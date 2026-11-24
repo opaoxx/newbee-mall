@@ -1,0 +1,55 @@
+@import url("my-orders.css");
+
+.favorites-content {
+    min-height: 260px;
+    padding-bottom: 24px;
+}
+
+.favorites-empty {
+    color: #757575;
+    padding: 24px 0;
+}
+
+.favorites-empty a,
+.favorite-product a {
+    color: #176d6d;
+}
+
+.favorite-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 72px;
+    padding: 14px 0;
+    border-top: 1px solid #e8e8e8;
+}
+
+.favorite-cover {
+    object-fit: contain;
+}
+
+.favorite-product {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.favorite-price,
+.favorite-note {
+    margin-top: 6px;
+    color: #757575;
+}
+
+.favorite-remove {
+    flex: none;
+    padding: 8px 12px;
+    border: 1px solid #d5d5d5;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+}
+
+.favorite-remove:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}

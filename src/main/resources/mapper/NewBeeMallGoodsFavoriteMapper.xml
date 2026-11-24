@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ltd.newbee.mall.dao.NewBeeMallGoodsFavoriteMapper">
+    <resultMap id="FavoriteMap" type="ltd.newbee.mall.entity.NewBeeMallGoodsFavorite">
+        <constructor>
+            <idArg column="favorite_id" javaType="_long"/>
+            <arg column="user_id" javaType="_long"/>
+            <arg column="goods_id" javaType="_long"/>
+            <arg column="create_time" javaType="java.util.Date"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="FavoriteItemMap" type="ltd.newbee.mall.controller.vo.FavoriteItemVO">
+        <constructor>
+            <idArg column="goods_id" javaType="_long"/>
+            <arg column="goods_name" javaType="String"/>
+            <arg column="goods_cover_img" javaType="String"/>
+            <arg column="selling_price" javaType="Integer"/>
+            <arg column="goods_sell_status" javaType="Integer"/>
+        </constructor>
+    </resultMap>
+
+    <select id="findByUserAndGoods" resultMap="FavoriteMap">
+        select favorite_id, user_id, goods_id, create_time
+        from tb_newbee_mall_goods_favorite
+        where user_id = #{userId} and goods_id = #{goodsId}
+    </select>
+
+    <insert id="insertIfOnSale">
+        insert into tb_newbee_mall_goods_favorite (user_id, goods_id)
+        select #{userId}, goods_id
+        from tb_newbee_mall_goods_info
+        where goods_id = #{goodsId} and goods_sell_status = #{sellStatusUp}
+        on duplicate key update favorite_id = tb_newbee_mall_goods_favorite.favorite_id
+    </insert>
+
+    <delete id="deleteByUserAndGoods">
+        delete from tb_newbee_mall_goods_favorite
+        where user_id = #{userId} and goods_id = #{goodsId}
+    </delete>
+
+    <select id="countByUser" resultType="int">
+        select count(*) from tb_newbee_mall_goods_favorite where user_id = #{userId}
+    </select>
+
+    <select id="findPageByUser" resultMap="FavoriteItemMap">
+        select favorite.goods_id, goods.goods_name, goods.goods_cover_img, goods.selling_price, goods.goods_sell_status
+        from tb_newbee_mall_goods_favorite favorite
+        left join tb_newbee_mall_goods_info goods on goods.goods_id = favorite.goods_id
+        where favorite.user_id = #{userId}
+        order by favorite.create_time desc, favorite.favorite_id desc
+        limit #{offset}, #{pageSize}
+    </select>
+</mapper>

@@ -36,6 +36,10 @@
             <div class="order">
                 <input class="car" type="button" th:onclick="'saveAndGoCart('+${goodsDetail.goodsId}+')'" value="立即选购"/>
                 <input class="car" type="button" th:onclick="'saveToCart('+${goodsDetail.goodsId}+')'" value="加入购物车"/>
+                <button class="favorite-action" type="button"
+                        th:attr="data-favorite-url=@{/personal/favorites/{goodsId}(goodsId=${goodsDetail.goodsId})},
+                                 data-login-url=@{/login},aria-pressed=${favorited}"
+                        th:text="${favorited ? '取消收藏' : '收藏'}">收藏</button>
             </div>
             <div class="tb-extra ml20" id="J_tbExtra">
                 <dl>
@@ -70,6 +74,7 @@
 <script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
 <script th:src="@{/admin/plugins/sweetalert2/sweetalert2.all.min.js}"></script>
 <script th:src="@{/mall/js/search.js}" type="text/javascript"></script>
+<script th:src="@{/mall/js/favorites.js}"></script>
 <script type="text/javascript">
     /**
      * 添加到购物车

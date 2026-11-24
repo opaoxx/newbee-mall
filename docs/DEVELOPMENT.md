@@ -186,11 +186,19 @@ cd newbee-mall
 
 ### 3. 导入数据库
 
-执行项目中的 SQL 脚本（通常在 `sql` 或 `database` 目录）:
+全新安装时，先创建数据库，再导入项目的初始表结构和示例数据。
+
 ```bash
-mysql -u root -p newbee_mall_db < newbee_mall_schema.sql
-mysql -u root -p newbee_mall_db < newbee_mall_data.sql
+mysql -u root -p --default-character-set=utf8mb4 newbee_mall_db < src/main/resources/newbee_mall_schema.sql
 ```
+
+已有数据库升级商品收藏功能时，在部署新版本前对目标库执行增量建表脚本。
+
+```bash
+mysql -u root -p --default-character-set=utf8mb4 newbee_mall_db < src/main/resources/db/migration/20261124_create_goods_favorite.sql
+```
+
+增量脚本只创建收藏表，可重复执行。全新安装的初始化脚本已包含收藏表。
 
 ### 4. 配置项目
 

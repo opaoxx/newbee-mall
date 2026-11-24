@@ -8,13 +8,19 @@
  */
 package ltd.newbee.mall.interceptor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ltd.newbee.mall.common.Constants;
+import ltd.newbee.mall.util.ResultGenerator;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.nio.charset.StandardCharsets;
 
 /**
  * newbee-mall系统身份验证拦截器
@@ -26,15 +32,38 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component
 public class NewBeeMallLoginInterceptor implements HandlerInterceptor {
+    /** 单件商品收藏接口的路径前缀。 */
+    private static final String FAVORITE_ITEM_PATH_PREFIX = "/personal/favorites/";
+    /** 将收藏接口的未登录错误写为项目统一的 JSON 响应。 */
+    @Resource
+    private ObjectMapper objectMapper;
 
+    /**
+     * 检查商城会员 Session，并按路由返回对应的未登录响应。
+     *
+     * @param request 当前请求
+     * @param response 当前响应
+     * @param handler 当前 MVC 处理器
+     * @return 已登录时允许继续处理
+     * @throws Exception 响应写入失败时抛出
+     */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
-        if (null == request.getSession().getAttribute(Constants.MALL_USER_SESSION_KEY)) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return false;
-        } else {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute(Constants.MALL_USER_SESSION_KEY) != null) {
             return true;
         }
+        String path = request.getServletPath();
+        if (path.startsWith(FAVORITE_ITEM_PATH_PREFIX) && path.length() > FAVORITE_ITEM_PATH_PREFIX.length()) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            objectMapper.writeValue(response.getOutputStream(),
+                    ResultGenerator.genErrorResult(HttpServletResponse.SC_UNAUTHORIZED, "请先登录"));
+        } else {
+            response.sendRedirect(request.getContextPath() + "/login");
+        }
+        return false;
     }
 
     @Override

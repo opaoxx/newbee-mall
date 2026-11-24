@@ -28,6 +28,12 @@ public class NeeBeeMallWebMvcConfigurer implements WebMvcConfigurer {
     @Autowired
     private NewBeeMallCartNumberInterceptor newBeeMallCartNumberInterceptor;
 
+    /**
+     * 注册后台和商城的登录保护及购物车数量拦截器。
+     *
+     * @param registry MVC 拦截器注册表
+     */
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 添加一个拦截器，拦截以/admin为前缀的url路径（后台登陆拦截）
         registry.addInterceptor(adminLoginInterceptor)
@@ -55,6 +61,7 @@ public class NeeBeeMallWebMvcConfigurer implements WebMvcConfigurer {
                 .addPathPatterns("/orders/**")            
                 .addPathPatterns("/personal")
                 .addPathPatterns("/personal/updateInfo")
+                .addPathPatterns("/personal/favorites", "/personal/favorites/**")
                 .addPathPatterns("/selectPayType")
                 .addPathPatterns("/payPage");
     }

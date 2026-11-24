@@ -12,8 +12,10 @@ import ltd.newbee.mall.common.Constants;
 import ltd.newbee.mall.common.NewBeeMallException;
 import ltd.newbee.mall.common.ServiceResultEnum;
 import ltd.newbee.mall.controller.vo.NewBeeMallGoodsDetailVO;
+import ltd.newbee.mall.controller.vo.NewBeeMallUserVO;
 import ltd.newbee.mall.controller.vo.SearchPageCategoryVO;
 import ltd.newbee.mall.entity.NewBeeMallGoods;
+import ltd.newbee.mall.service.FavoriteService;
 import ltd.newbee.mall.service.NewBeeMallCategoryService;
 import ltd.newbee.mall.service.NewBeeMallGoodsService;
 import ltd.newbee.mall.util.BeanUtil;
@@ -24,6 +26,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +39,9 @@ public class GoodsController {
     private NewBeeMallGoodsService newBeeMallGoodsService;
     @Resource
     private NewBeeMallCategoryService newBeeMallCategoryService;
+    /** 读取当前会员对详情商品的收藏状态。 */
+    @Resource
+    private FavoriteService favoriteService;
 
     @GetMapping({"/search", "/search.html"})
     public String searchPage(@RequestParam Map<String, Object> params, HttpServletRequest request) {
@@ -71,8 +77,17 @@ public class GoodsController {
         return "mall/search";
     }
 
+    /**
+     * 渲染上架商品详情和当前会员的收藏状态。
+     *
+     * @param goodsId 商品主键
+     * @param request 当前详情页请求
+     * @param member 已登录的商城会员
+     * @return 商品详情模板
+     */
     @GetMapping("/goods/detail/{goodsId}")
-    public String detailPage(@PathVariable("goodsId") Long goodsId, HttpServletRequest request) {
+    public String detailPage(@PathVariable("goodsId") Long goodsId, HttpServletRequest request,
+                             @SessionAttribute(Constants.MALL_USER_SESSION_KEY) NewBeeMallUserVO member) {
         if (goodsId < 1) {
             NewBeeMallException.fail("参数异常");
         }
@@ -84,6 +99,7 @@ public class GoodsController {
         BeanUtil.copyProperties(goods, goodsDetailVO);
         goodsDetailVO.setGoodsCarouselList(goods.getGoodsCarousel().split(","));
         request.setAttribute("goodsDetail", goodsDetailVO);
+        request.setAttribute("favorited", favoriteService.isFavorited(member.getUserId(), goodsId));
         return "mall/detail";
     }
 
