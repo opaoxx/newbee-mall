@@ -164,6 +164,17 @@
         </foreach>
         );
     </select>
+    <resultMap id="GoodsStatisticsMap" type="ltd.newbee.mall.entity.GoodsStatistics">
+        <constructor>
+            <arg column="total_goods" javaType="_long"/>
+            <arg column="on_sale_goods" javaType="_long"/>
+        </constructor>
+    </resultMap>
+    <select id="countGoodsStatistics" resultMap="GoodsStatisticsMap">
+        select count(*) as total_goods,
+               count(case when goods_sell_status = #{sellStatusUp} then 1 end) as on_sale_goods
+        from tb_newbee_mall_goods_info
+    </select>
     <select id="getTotalNewBeeMallGoods" parameterType="Map" resultType="int">
         select count(*) from tb_newbee_mall_goods_info
         <where>

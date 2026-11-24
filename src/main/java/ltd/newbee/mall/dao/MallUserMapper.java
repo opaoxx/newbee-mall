@@ -35,5 +35,12 @@ public interface MallUserMapper {
 
     int getTotalMallUsers(PageQueryUtil pageUtil);
 
+    /**
+     * 统计未注销的会员，包含已锁定会员。
+     *
+     * @return 未注销会员数
+     */
+    long countNonDeletedMembers();
+
     int lockUserBatch(@Param("ids") Integer[] ids, @Param("lockStatus") int lockStatus);
 }

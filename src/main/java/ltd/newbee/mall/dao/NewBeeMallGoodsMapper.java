@@ -8,6 +8,7 @@
  */
 package ltd.newbee.mall.dao;
 
+import ltd.newbee.mall.entity.GoodsStatistics;
 import ltd.newbee.mall.entity.NewBeeMallGoods;
 import ltd.newbee.mall.entity.StockNumDTO;
 import ltd.newbee.mall.util.PageQueryUtil;
@@ -35,6 +36,14 @@ public interface NewBeeMallGoodsMapper {
     List<NewBeeMallGoods> findNewBeeMallGoodsList(PageQueryUtil pageUtil);
 
     int getTotalNewBeeMallGoods(PageQueryUtil pageUtil);
+
+    /**
+     * 同时统计全部商品和上架商品。
+     *
+     * @param sellStatusUp 运行代码定义的上架状态
+     * @return 两项商品统计
+     */
+    GoodsStatistics countGoodsStatistics(@Param("sellStatusUp") int sellStatusUp);
 
     List<NewBeeMallGoods> selectByPrimaryKeys(List<Long> goodsIds);
 

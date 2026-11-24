@@ -33,6 +33,13 @@ public interface NewBeeMallOrderMapper {
 
     int getTotalNewBeeMallOrders(PageQueryUtil pageUtil);
 
+    /**
+     * 统计未删除的订单，包含已关闭订单。
+     *
+     * @return 未删除订单数
+     */
+    long countNonDeletedOrders();
+
     List<NewBeeMallOrder> selectByPrimaryKeys(@Param("orderIds") List<Long> orderIds);
 
     int checkOut(@Param("orderIds") List<Long> orderIds);

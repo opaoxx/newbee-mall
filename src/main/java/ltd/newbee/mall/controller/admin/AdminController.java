@@ -12,6 +12,7 @@ import cn.hutool.captcha.ShearCaptcha;
 import ltd.newbee.mall.common.ServiceResultEnum;
 import ltd.newbee.mall.entity.AdminUser;
 import ltd.newbee.mall.service.AdminUserService;
+import ltd.newbee.mall.service.DashboardService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -33,6 +34,9 @@ public class AdminController {
 
     @Resource
     private AdminUserService adminUserService;
+    /** 为后台首页提供四项基础统计。 */
+    @Resource
+    private DashboardService dashboardService;
 
     @GetMapping({"/login"})
     public String login() {
@@ -45,9 +49,16 @@ public class AdminController {
     }
 
 
+    /**
+     * 渲染后台基础统计首页。
+     *
+     * @param request 当前后台页面请求
+     * @return 后台首页模板
+     */
     @GetMapping({"", "/", "/index", "/index.html"})
     public String index(HttpServletRequest request) {
         request.setAttribute("path", "index");
+        request.setAttribute("dashboardSummary", dashboardService.getSummary());
         return "admin/index";
     }
 

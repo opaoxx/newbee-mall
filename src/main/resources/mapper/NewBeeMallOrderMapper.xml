@@ -74,6 +74,9 @@
         </if>
     </select>
 
+    <select id="countNonDeletedOrders" resultType="long">
+        select count(*) from tb_newbee_mall_order where is_deleted = 0
+    </select>
     <select id="getTotalNewBeeMallOrders" parameterType="Map" resultType="int">
         select count(*) from tb_newbee_mall_order
         <where>
